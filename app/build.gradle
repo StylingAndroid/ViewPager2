@@ -1,0 +1,58 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+    defaultConfig {
+        applicationId "com.stylingandroid.viewpager2"
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.appCompat
+    implementation Libraries.ktxCore
+    implementation Libraries.material
+    implementation Libraries.constraintLayout
+    implementation Libraries.lifecycleExtensions
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.viewpager2
+}
+
+detekt {
+    version = "1.0.0-RC15"
+    failFast = true
+    config = files("$projectDir/detekt.yml")
+    reports {
+        xml {
+            destination = file("$project.buildDir/reports/detekt/detekt.xml")
+        }
+    }
+    filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
+}
+
+ktlint {
+    android = true
+    version = "0.31.0"
+    ignoreFailures = false
+    reporters = [ReporterType.PLAIN_GROUP_BY_FILE, ReporterType.CHECKSTYLE]
+    outputToConsole = true
+}
